@@ -1,0 +1,81 @@
+module mips (
+        input  wire        clk,
+        input  wire        rst,
+        input  wire [4:0]  ra3,
+        input  wire [31:0] instr,
+        input  wire [31:0] rd_dm,
+        output wire        we_dm,
+        output wire [31:0] pc_current,
+        output wire [31:0] alu_out,
+        output wire [31:0] wd_dm,
+        output wire [31:0] rd3
+    );
+    
+    wire        branch;
+    wire        jump;
+    wire        reg_dst;
+    wire        we_reg;
+    wire        alu_src;
+    wire        dm2reg;
+    wire        hilo_we;
+    wire        update_regfile;
+    wire        shift_sel;
+    wire        shift_dir;
+    wire        jal;
+    wire        jr;
+    wire        we_dm_id;
+    wire [1:0]  hilo_sel;
+    wire [2:0]  alu_ctrl;
+    wire [31:0] decode_instr;
+
+    datapath dp (
+            .clk                (clk),
+            .rst                (rst),
+            .branch             (branch),
+            .jump               (jump),
+            .jal                (jal),
+            .jr                 (jr),
+            .reg_dst            (reg_dst),
+            .we_reg             (we_reg),
+            .alu_src            (alu_src),
+            .dm2reg             (dm2reg),
+            .hilo_we            (hilo_we),
+            .update_regfile     (update_regfile),
+            .shift_sel          (shift_sel),
+            .shift_dir          (shift_dir),
+            .we_dm              (we_dm_id),
+            .hilo_sel           (hilo_sel),
+            .alu_ctrl           (alu_ctrl),
+            .ra3                (ra3),
+            .instr              (instr),
+            .rd_dm              (rd_dm),
+            .memory_we_dm       (we_dm),
+            .pc_current         (pc_current),
+            .alu_out            (),
+            .memory_result_reg  (alu_out),
+            .memory_source_reg2 (wd_dm),
+            .decode_instr       (decode_instr),
+            .rd3                (rd3)
+        );
+
+    controlunit cu (
+            .opcode             (decode_instr[31:26]),
+            .funct              (decode_instr[5:0]),
+            .branch             (branch),
+            .jump               (jump),
+            .jal                (jal),
+            .jr                 (jr),
+            .reg_dst            (reg_dst),
+            .we_reg             (we_reg),
+            .alu_src            (alu_src),
+            .we_dm              (we_dm_id),
+            .dm2reg             (dm2reg),
+            .hilo_we            (hilo_we),
+            .hilo_sel           (hilo_sel),
+            .update_regfile     (update_regfile),
+            .shift_sel          (shift_sel),
+            .shift_dir          (shift_dir),
+            .alu_ctrl           (alu_ctrl)
+        );
+
+endmodule
